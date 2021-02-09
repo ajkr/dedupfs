@@ -12,7 +12,9 @@ namespace ROCKSDB_NAMESPACE {
 
 #ifndef ROCKSDB_LITE
 
-static FactoryFunc<FileSystem> dedupfs_reg =
+extern "C" FactoryFunc<FileSystem> dedupfs_reg;
+
+FactoryFunc<FileSystem> dedupfs_reg =
     ObjectLibrary::Default()->Register<FileSystem>(
         "dedupfs",
         [](const std::string& /* uri */, std::unique_ptr<FileSystem>* f,
