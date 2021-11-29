@@ -1,0 +1,13 @@
+cmake_minimum_required(VERSION 3.4)
+
+set(dedupfs_SOURCES "dedupfs.cc" PARENT_SCOPE)
+set(dedupfs_INCLUDE_PATHS "${LIBCRYPTO_HOME}/include" PARENT_SCOPE)
+set(dedupfs_LINK_PATHS "${LIBCRYPTO_HOME}/lib" PARENT_SCOPE)
+if(MSVC)
+  set(dedupfs_LIBS "libcrypto" PARENT_SCOPE)
+  set(dedupfs_CMAKE_SHARED_LINKER_FLAGS "/EXPORT:dedupfs_reg" PARENT_SCOPE)
+  set(dedupfs_CMAKE_EXE_LINKER_FLAGS "/INCLUDE:dedupfs_reg" PARENT_SCOPE)
+else()
+  set(dedupfs_LIBS "crypto" PARENT_SCOPE)
+  set(dedupfs_CMAKE_EXE_LINKER_FLAGS "-u dedupfs_reg" PARENT_SCOPE)
+endif()
