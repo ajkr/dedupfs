@@ -14,6 +14,19 @@ namespace ROCKSDB_NAMESPACE {
 
 extern "C" FactoryFunc<FileSystem> dedupfs_reg;
 
+#if ROCKSDB_MAJOR >= 7
+
+FactoryFunc<FileSystem> dedupfs_reg =
+    ObjectLibrary::Default()->AddFactory<FileSystem>(
+        "dedupfs",
+        [](const std::string& /* uri */, std::unique_ptr<FileSystem>* f,
+           std::string* /* errmsg */) {
+          *f = NewDedupFileSystem();
+          return f->get();
+        });
+
+#else  // ROCKSDB_MAJOR >= 7
+
 FactoryFunc<FileSystem> dedupfs_reg =
     ObjectLibrary::Default()->Register<FileSystem>(
         "dedupfs",
@@ -23,11 +36,15 @@ FactoryFunc<FileSystem> dedupfs_reg =
           return f->get();
         });
 
+#endif  // ROCKSDB_MAJOR >= 7
+
 #endif  // ROCKSDB_LITE
 
 class DedupFileSystem : public FileSystemWrapper {
  public:
   DedupFileSystem(std::shared_ptr<FileSystem> t) : FileSystemWrapper(t) {}
+
+  const char* Name() const override { return "DedupFileSystem"; }
 };
 
 std::unique_ptr<FileSystem>
